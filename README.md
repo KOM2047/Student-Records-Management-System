@@ -2,7 +2,7 @@
 
 erDiagram
     STUDENTS ||--o{ ENROLLMENTS : "registers for"
-    COURSES ||--o{ ENROLLMENTS : "has"
+    COURSES  ||--o{ ENROLLMENTS : "has"
     ENROLLMENTS ||--o{ GRADES : "receives"
     ENROLLMENTS ||--o{ ATTENDANCE : "records"
 
@@ -12,20 +12,30 @@ erDiagram
         string last_name
         string email
     }
+
     COURSES {
         int course_id PK
         string course_name
         string course_code
     }
+
     ENROLLMENTS {
         int enrollment_id PK
         int student_id FK
         int course_id FK
         date enrollment_date
     }
+
     GRADES {
         int grade_id PK
         int enrollment_id FK
         string assessment_type
         float score
+    }
+
+    ATTENDANCE {
+        int attendance_id PK
+        int enrollment_id FK
+        date attendance_date
+        string status
     }
