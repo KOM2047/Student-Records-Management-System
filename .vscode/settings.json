@@ -6,7 +6,7 @@
             "server": "localhost",
             "port": 5432,
             "driver": "PostgreSQL",
-            "database": "postgres",
+            "database": "student_records_db",
             "name": "Student Records DB",
             "username": "postgres"
         }
