@@ -4,13 +4,16 @@ import os
 import re
 from reportlab.lib.pagesizes import letter
 from reportlab.pdfgen import canvas
+from dotenv import load_dotenv
+
+load_dotenv()
 
 # Database Configuration
 DB_PARAMS = {
-    "host": "localhost",
-    "database": "student_records_db",
-    "user": "postgres",
-    "password": "password"
+    "host": os.getenv("DB_HOST"),
+    "database": os.getenv("DB_NAME"),
+    "user": os.getenv("DB_USER"),
+    "password": os.getenv("DB_PASS")
 }
 
 def get_db_connection():

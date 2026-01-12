@@ -2,13 +2,16 @@ import pandas as pd
 import psycopg2
 import json
 import os
+from dotenv import load_dotenv
 
-# Database Connection (Use your specific password)
+load_dotenv()
+
+# Database Connection 
 DB_PARAMS = {
-    "host": "localhost",
-    "database": "student_records_db",
-    "user": "postgres",
-    "password": "password"
+    "host": os.getenv("DB_HOST"),
+    "database": os.getenv("DB_NAME"),
+    "user": os.getenv("DB_USER"),
+    "password": os.getenv("DB_PASS")
 }
 
 def get_db_connection():
@@ -82,25 +85,39 @@ def process_grades(cursor):
     file_path = 'raw_data/json_source/legacy_grades.json'
     
     # Extract
+    if not os.path.exists(file_path):
+        print("Skipping: JSON file not found.")
+        return
+
     with open(file_path, 'r') as f:
         grades_data = json.load(f)
     
     count = 0
+    skipped = 0
+    
     for item in grades_data:
         student_id = item['student_ref_id']
         course_code = item['course_code_ref']
         
-        # 1. Find the course_id for 'DE101'
+        # CHECK 1: Does the student exist? 
+        # (They might have been cleaned out in the CSV step)
+        cursor.execute("SELECT 1 FROM students WHERE student_id = %s", (student_id,))
+        if not cursor.fetchone():
+            print(f"Skipping grade: Student ID {student_id} not found (filtered out).")
+            skipped += 1
+            continue
+
+        # CHECK 2: Find the course_id for 'DE101'
         cursor.execute("SELECT course_id FROM courses WHERE course_code = %s", (course_code,))
         course_res = cursor.fetchone()
         
         if not course_res:
             print(f"Skipping grade: Course {course_code} not found.")
+            skipped += 1
             continue
         course_id = course_res[0]
 
-        # 2. Find or Create Enrollment (Idempotent)
-        # We need an enrollment_id to insert a grade.
+        # 3. Find or Create Enrollment (Idempotent)
         cursor.execute("""
             SELECT enrollment_id FROM enrollments 
             WHERE student_id = %s AND course_id = %s;
@@ -118,14 +135,15 @@ def process_grades(cursor):
             """, (student_id, course_id))
             enrollment_id = cursor.fetchone()[0]
 
-        # 3. Load Grade
+        # 4. Load Grade
         cursor.execute("""
             INSERT INTO grades (enrollment_id, assessment_type, score, weight)
             VALUES (%s, %s, %s, %s);
         """, (enrollment_id, item['assessment'], item['score'], item['weight']))
         count += 1
 
-    print(f"Loaded: {count} grade records (linked to valid enrollments).")
+    print(f"Loaded: {count} grade records.")
+    print(f"Skipped: {skipped} orphan records (student/course missing).")
 
 # ==========================================
 # MAIN PIPELINE CONTROLLER

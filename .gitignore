@@ -1,0 +1,14 @@
+.env
+
+# Python junk
+__pycache__/
+*.pyc
+
+# Data files
+raw_data/
+*.csv
+*.xlsx
+*.json
+*.pdf
+
+.vscode/
