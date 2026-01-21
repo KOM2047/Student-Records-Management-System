@@ -4,3 +4,4 @@ openpyxl
 faker
 reportlab
 python-dotenv
+textual
