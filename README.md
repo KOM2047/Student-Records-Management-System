@@ -1,19 +1,68 @@
 # Student Records Management System 🎓
 
-`https://img.shields.io/badge/Python-3.12-blue?logo=python&logoColor=white`  
-`https://img.shields.io/badge/PostgreSQL-16-4169E1?logo=postgresql&logoColor=white`  
-`https://img.shields.io/badge/Deployment-Render_Cloud-black?logo=render`  
-`https://img.shields.io/badge/Status-Production_Ready-green`
+[![Python 3.12](https://img.shields.io/badge/Python-3.12-blue?logo=python&logoColor=white)](https://python.org)
+[![PostgreSQL 16](https://img.shields.io/badge/PostgreSQL-16-4169E1?logo=postgresql&logoColor=white)](https://postgresql.org)
+[![Deployment Render](https://img.shields.io/badge/Deployment-Render_Cloud-black?logo=render)](https://render.com)
+[![Status Production](https://img.shields.io/badge/Status-Production_Ready-green)]()
+[![License](https://img.shields.io/badge/License-MIT-yellow.svg)]()
 
-A robust, cloud-deployed **Data Engineering project** that manages student academic lifecycles.  
-It features a normalized PostgreSQL database, a multi-source ETL pipeline (handling CSV, Excel, and JSON), and a secure Command Line Interface (CLI) for administration.
+> A robust, cloud-deployed Data Engineering project that manages student academic lifecycles.
 
 ---
 
-## 🏗️ Architecture
+## 📖 Table of Contents
+- [About the Project](#-about-the-project)
+- [Key Features](#-key-features)
+- [System Architecture](#-system-architecture)
+  - [Entity Relationship Diagram](#1-entity-relationship-diagram-erd)
+  - [ETL Pipeline](#2-etl-pipeline-flowchart)
+  - [Project Structure](#3-project-structure)
+- [Getting Started](#-getting-started)
+- [Usage Guide](#-usage-guide)
+- [Data Analytics](#-data-analytics--insights)
+- [Testing & QA](#-testing--quality-assurance)
+- [Future Improvements](#-future-improvements)
+- [License](#-license)
+
+---
+
+## 🧐 About the Project
+
+The **Student Records Management System** is a comprehensive data engineering solution designed to modernize how educational institutions handle student data. It moves away from scattered spreadsheets to a centralized, normalized cloud database.
+
+By integrating a **multi-source ETL pipeline**, this system ingests data from legacy CSVs, Excel files, and JSON logs, cleanses it, and loads it into a **PostgreSQL** database hosted on Render. A secure CLI allows administrators to manage records efficiently while ensuring data integrity.
+
+### Built With
+*   **Language:** Python 3.12
+*   **Database:** PostgreSQL 16 (Render Cloud)
+*   **Data Processing:** Pandas, NumPy
+*   **Validation:** Pydantic (implied/best practice) / Custom Logic
+*   **Environment:** Dotenv for security
+
+---
+
+## 🚀 Key Features
+
+*   **Multi-Source ETL**: Seamlessly ingests and merges data from disparate formats:
+    *   `CSV` (Student Personal Data)
+    *   `Excel` (Course Catalogs)
+    *   `JSON` (Historical Grades)
+*   **Cloud-First Architecture**: Fully deployed on Render with SSL-secured database connections.
+*   **Robust Data Integrity**: Enforces 3rd Normal Form (3NF), validates scores (0–100), checks for duplicates, and maintains referential integrity.
+*   **Admin CLI**: Interactive command-line interface for:
+    *   Adding Students
+    *   Enrolling in Courses
+    *   Recording Grades & Attendance
+    *   Generating PDF Transcripts
+*   **Automated Reporting**: On-demand generation of detailed transcripts and reliable CSV exports.
+*   **Unit Testing Suite**: Automated tests verifying business logic (GPA calc) and pipeline data volume.
+
+---
+
+## 🏗 System Architecture
 
 ### 1. Entity-Relationship Diagram (ERD)
-The database follows **3rd Normal Form (3NF)** to ensure data integrity and reduce redundancy.
+The database schema is normalized to **3NF** to eliminate redundancy.
 
 ```mermaid
 erDiagram
@@ -50,7 +99,7 @@ erDiagram
 ```
 
 ### 2. ETL Pipeline Flowchart
-Data is extracted from disparate sources, cleaned using **Pandas**, and loaded into the cloud database with referential integrity checks.
+Data flows from raw files through a cleaning process before secure loading.
 
 ```mermaid
 graph LR
@@ -59,99 +108,95 @@ graph LR
     C -->|Remove Nulls| D[Cleaned DataFrames]
     C -->|Validate IDs| D
     D -->|Load| E[(Render Cloud DB)]
-    
+
     subgraph Sources
     S1[new_students.csv]
     S2[future_courses.xlsx]
     S3[legacy_grades.json]
     end
-    
+
     A --- S1
     A --- S2
     A --- S3
 ```
 
----
-
-## 🚀 Key Features
-- **Multi-Source ETL**: Ingests data from CSV (Students), Excel (Courses), and JSON (Grades).  
-- **Cloud Deployment**: Database hosted on Render (PostgreSQL 16) with SSL security.  
-- **Admin CLI**: Python-based menu to Add Students, Enroll, Grade, and Mark Attendance.  
-- **Automated Reports**: Generates PDF transcripts and CSV exports on demand.  
-- **Data Integrity**: Validates scores (0–100), prevents duplicates, and handles missing foreign keys gracefully.  
-- **Unit Testing**: Automated test suite verifies ETL row counts and GPA calculation logic.  
-
----
-
-## 📂 Database Schema
-
-| Table       | Description                        | Key Columns                                |
-|-------------|------------------------------------|--------------------------------------------|
-| **students** | Core student profiles              | `student_id (PK)`, `email (Unique)`, `major` |
-| **courses**  | Academic catalog                   | `course_id (PK)`, `course_code (Unique)`, `credits` |
-| **enrollments** | Junction table linking students to courses | `enrollment_id (PK)`, `semester`, `enrollment_date` |
-| **grades**   | Assessment scores                  | `score (0–100)`, `weight (0.0–1.0)`, `assessment_type` |
-| **attendance** | Daily presence logs              | `status (Present/Absent/Late)`, `attendance_date` |
+### 3. Project Structure
+```text
+Student-Records-Management-System/
+├── data/                   # Data storage
+│   └── raw_data/           # Input files (CSV, XLSX, JSON)
+├── src/                    # Source code
+│   ├── etl_pipeline.py     # ETL logic
+│   ├── cli_app.py          # Admin Interface
+│   └── utils.py            # Helper functions
+├── tests/                  # Automated tests
+├── sql/                    # SQL scripts for schema/queries
+├── requirements.txt        # Dependencies
+└── README.md               # Project Documentation
+```
 
 ---
 
-## 🛠️ Setup & Installation
+## 🛠 Getting Started
 
-1. **Clone the Repository**
-   ```bash
-   git clone https://github.com/KOM2047/Student-Records-Management-System.git
-   cd Student-Records-Management-System
-   ```
+follow these steps to set up the project locally.
 
-2. **Install Dependencies**
-   ```bash
-   pip install -r requirements.txt
-   ```
+### Prerequisites
+*   Python 3.10+
+*   PostgreSQL (or utilize the cloud config)
 
-3. **Configure Environment Variables**  
-   Create a `.env` file in the root folder (do not commit this file!). Add your Render credentials:
-   ```ini
-   DB_HOST=dpg-xxxxxx.oregon-postgres.render.com
-   DB_NAME=student_records_db_xxxx
-   DB_USER=student_user_xxxx
-   DB_PASS=your_secret_password
-   ```
+### Installation
 
-4. **Run the ETL Pipeline**  
-   Populate the cloud database with the initial dataset:
-   ```bash
-   python src/etl_pipeline.py
-   ```
+1.  **Clone the Repository**
+    ```bash
+    git clone https://github.com/YOUR_USERNAME/Student-Records-Management-System.git
+    cd Student-Records-Management-System
+    ```
+
+2.  **Install Dependencies**
+    ```bash
+    pip install -r requirements.txt
+    ```
+
+3.  **Configure Environment**
+    Create a `.env` file in the root directory:
+    ```env
+    DB_HOST=dpg-xxxxxx.oregon-postgres.render.com
+    DB_NAME=student_records_db_xxxx
+    DB_USER=student_user_xxxx
+    DB_PASS=your_secret_password
+    ```
+
+4.  **Run the ETL Pipeline**
+    Initialize the database with seed data:
+    ```bash
+    python src/etl_pipeline.py
+    ```
 
 ---
 
-## 📊 Usage Guide
+## 💻 Usage Guide
 
 ### Administrator CLI
-Run the interactive menu to manage records without writing SQL:
+Launch the interactive management console:
 ```bash
 python src/cli_app.py
 ```
 
-- **Option 1**: Add a new student (checks for duplicates).  
-- **Option 4**: Mark attendance (safely updates daily logs).  
-- **Option 5**: Generate reports (select "2" for PDF output).  
-
-### Automated Testing
-Run the quality assurance suite:
-```bash
-python tests/test_data_quality.py
-```
-
-- ✅ Verifies database constraints (e.g., rejecting grade > 100).  
-- ✅ Verifies ETL volume (row counts).  
-- ✅ Verifies business logic (GPA calculation).  
+**Menu Options:**
+1.  **Add Student**: Registers a new profile (checks for duplicates).
+2.  **Enroll Student**: Links a student to a course for a semester.
+3.  **Record Grade**: Enters assessment scores with validation.
+4.  **Mark Attendance**: Log daily presence (Present/Absent/Late).
+5.  **Generate Reports**: Export PDF transcripts or CSV dumps.
 
 ---
 
-## 🔎 Analytics (SQL Examples)
+## 📊 Data Analytics & Insights
 
-### 1. Dean’s List (Top 10 Students)
+The system supports complex SQL queries for academic insights.
+
+**Example 1: Dean’s List (Top 10 Students)**
 ```sql
 SELECT first_name, last_name, ROUND(AVG(score), 2) as gpa
 FROM student_transcripts_view
@@ -161,7 +206,7 @@ ORDER BY gpa DESC
 LIMIT 10;
 ```
 
-### 2. At-Risk Students (Attendance < 75%)
+**Example 2: At-Risk Students (Attendance < 75%)**
 ```sql
 SELECT s.last_name, c.course_code, 
        (present_days::decimal / total_days) * 100 as attendance_rate
@@ -171,5 +216,28 @@ WHERE (present_days::decimal / total_days) < 0.75;
 
 ---
 
+## 🧪 Testing & Quality Assurance
+
+Run the automated test suite to verify system stability:
+```bash
+python tests/test_data_quality.py
+```
+
+*   ✅ **Constraint Validation**: Ensures grades > 100 or null foreign keys are rejected.
+*   ✅ **ETL Volume Checks**: Confirms row counts match input source files.
+*   ✅ **Business Logic**: Verifies GPA calculation accuracy.
+
+---
+
+## 🔮 Future Improvements
+
+*   **Web GUI**: Develop a React/Flask frontend for easier non-technical access.
+*   **Dockerization**: Containerize the application for consistent deployment.
+*   **CI/CD Pipeline**: Automate testing and deployment using GitHub Actions.
+*   **Authentication**: Implement Role-Based Access Control (RBAC) specifically for different admin levels.
+
+---
+
 ## 📜 License
-This project was developed as part of the **CAPACITI Data Engineering Career Accelerator**.
+
+This project was developed as part of the CAPACITI Data Engineering Career Accelerator.
